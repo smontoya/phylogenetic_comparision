@@ -159,14 +159,14 @@ if (!d3) { throw "d3 wasn't included!"};
   d3.phylogram.styleTreeNodes = function(vis) {
     vis.selectAll('g.leaf.node')
       .append("svg:circle")
-        .attr("r", 4.5)
+        .attr("r", 4)
         .attr('stroke',  'yellowGreen')
         .attr('fill', 'greenYellow')
         .attr('stroke-width', '2px');
     
     vis.selectAll('g.root.node')
       .append('svg:circle')
-        .attr("r", 4.5)
+        .attr("r", 6)
         .attr('fill', 'steelblue')
         .attr('stroke', '#369')
         .attr('stroke-width', '2px');
@@ -196,7 +196,7 @@ if (!d3) { throw "d3 wasn't included!"};
   }
   
   
-  d3.phylogram.build = function(selector, nodes, options) {
+  d3.phylogram.build = function(selector, nodes, options, mirror) {
     options = options || {}
     var w = options.width || d3.select(selector).style('width') || d3.select(selector).attr('width'),
         h = options.height || d3.select(selector).style('height') || d3.select(selector).attr('height'),
@@ -222,6 +222,11 @@ if (!d3) { throw "d3 wasn't included!"};
         .range([0, w]);
     } else {
       var yscale = scaleBranchLengths(nodes, w)
+    }
+    if (mirror){
+      var xscale = d3.scale.linear()
+        .domain([w, 0])
+        .range([w, 0]);
     }
     
     if (!options.skipTicks) {
@@ -293,7 +298,6 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr('fill', 'black')
         .text(function(d) { return d.name + ' ('+d.length+')'; });
     }
-    
     return {tree: tree, vis: vis}
   }
   
