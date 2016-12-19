@@ -1,11 +1,11 @@
-setwd("/home/sam/Escritorio/usach/proyecto_bio/Proyecto 1") #Cambiar por tu directorio
+#setwd("/home/sam/Escritorio/usach/proyecto_bio/Proyecto 1") #Cambiar por tu directorio
 # source("sources/system/packages.R")         #Carga un conjunto de paquetes
 cat("\014")                                 #Limpiar consola
-library(Biobase)
-library(GEOquery)
-library(plyr)
-library(siggenes)
-library(ape)
+# library(Biobase)
+# library(GEOquery)
+# library(plyr)
+# library(siggenes)
+# library(ape)
 library(phangorn)
 
 
@@ -29,10 +29,12 @@ edgelabels(round(tree2$edge.length,1),cex=0.6,bg = "white")
 #===================================
 distancias=NULL
 distancias=round(treedist(tree1,tree2),1)
-cat("=======================================\n")
-cat("- \t Distancias entre tree1 and tree2\n")
-cat("=======================================\n")
+#cat("=======================================\n")
+#cat("- \t Distancias entre tree1 and tree2\n")
+#cat("=======================================\n")
+cat("\014")    
 print(distancias)
+
 
 #===================================
 #4 Estimaci?n de longitud de las ramas (cuando no existen)
@@ -57,9 +59,10 @@ for (a in 1:length(stree1))
     matriz[a,b]=as.numeric(all.equal(stree1[[a]],stree2[[b]]))
   }
 }
-print(matriz)
+# print(matriz)
  
 #===================================
 #6 Guardar ?rboles
 #===================================
 write.tree(tree1,"tree1_saved.tree")
+
