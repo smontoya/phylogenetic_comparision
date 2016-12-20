@@ -17,31 +17,48 @@ $data = explode(" ", trim(file_get_contents("uploads/distancias.txt")));
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+  Ionicons
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"> -->
   <!-- Theme style -->
   <link rel="stylesheet" href="css/AdminLTE.min.css">
   <link rel="stylesheet" href="css/skins/_all-skins.min.css">
-
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
   <header class="main-header">
-    <a href="../../index2.html" class="logo">
+    <a href="#" class="logo">
       <span class="logo-mini"><b>P</b>C</span>
       <span class="logo-lg"><b>Phylogenetic</b> Comparator</span>
     </a>
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+    </nav>
   </header>
   <!-- Left side column. contains the sidebar -->
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu">
-        <li><a href="../../documentation/index.html"><i class="fa fa-book"></i> <span>Comparacion</span></a></li>
+      <ul class="sidebar-menu" role="tablist">
+        <li class="active" role="presentation">
+          <a href="#comparacion" role="tab" data-toggle="tab"  aria-controls="comparacion"><i class="fa fa-book"></i>
+             <span>Comparación</span></a>
+        </li> 
+        <li role="presentation">
+          <a href="#distancias" role="tab" data-toggle="tab"  aria-controls="distancias">
+            <i class="fa fa-book"></i> <span>Distancias</span></a>
+        </li> 
+        <li role="presentation">
+          <a href="#buscador" role="tab" data-toggle="tab"  aria-controls="distancias">
+            <i class="fa fa-search"></i> <span>Buscador</span></a>
+        </li> 
       </ul>
     </section>
   </aside>
@@ -60,35 +77,54 @@ $data = explode(" ", trim(file_get_contents("uploads/distancias.txt")));
 
     <!-- Main content -->
     <section class="content">
-      <div class="box">    
-        <div class="box-body">
-          <div id='phylograms'></div>
-          <table class="table table-bordered">
-              <thead>
-                <td>symmetric.difference</td>
-                <td>branch.score.difference</td>
-                <td>path.difference</td>
-                <td>quadratic.path.difference</td>
-              </thead>
-              <tr>
-                <td> <?php echo $data[0]; ?> </td>
-                <td> <?php echo $data[1]; ?> </td>
-                <td> <?php echo $data[2]; ?> </td>
-                <td> <?php echo $data[3]; ?> </td>
-                
-              </tr>
-          </table>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="comparacion">
+          <div class="box">
+            <div class="box-body">
+              <div id='phylograms'></div>
+            </div>
+          </div>  
+
         </div>
+        <div role="tabpanel" class="tab-pane" id="distancias">
+          <div class="box">
+
+          <table class="table table-bordered">
+            <thead>
+              <td>symmetric.difference</td>
+              <td>branch.score.difference</td>
+              <td>path.difference</td>
+              <td>quadratic.path.difference</td>
+            </thead>
+            <tr>
+              <td> <?php echo $data[0]; ?> </td>
+              <td> <?php echo $data[1]; ?> </td>
+              <td> <?php echo $data[2]; ?> </td>
+              <td> <?php echo $data[3]; ?> </td>              
+            </tr>
+          </table>
+          </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="buscador">
+          <div class="box">
+            
+            <input type="text" id="especie_find">
+            <br>
+            <ul id="elements_list">
+              
+            </ul>
+          </div>
+
+        </div>
+        <div role="tabpanel" class="tab-pane" id="settings">...</div>
       </div>
 
     </section>
   </div>
 
   <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-    </div>
-    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-    reserved.
+    <div class="pull-right hidden-xs"></div>
+    <strong>Usach 2016 </strong>
   </footer>
   <div class="control-sidebar-bg"></div>
 </div>
@@ -134,7 +170,43 @@ $(function() {
       width: 300,
       height: 650
     }, true);
-
+    function get_elements (elements){
+      var array_elem = []
+      if ('branchset' in elements){
+        for (index in elements['branchset']){
+          if (elements['branchset'][index]['name'].length > 0)
+            array_elem.push(elements['branchset'][index]['name']);
+          if ('children' in elements['branchset'][index]){
+            for (index_ch in elements['branchset'][index]['children']){
+              array_elem = array_elem.concat(get_elements(elements['branchset'][index]['children'][index_ch]));
+            }
+          }
+        }
+      }
+      if ('children' in elements){
+        for (index in elements['children']){
+          array_elem = array_elem.concat(get_elements(elements['children'][index]));
+        }
+      }
+      return array_elem
+    }
+    function dibujar_elementos(elementos){
+      $("#elements_list").empty();
+      for (elem in elementos){
+        $("#elements_list").append('<li>'+elementos[elem]+'</li>');
+      }
+    }
+    var elementos = get_elements(arbol1);
+    dibujar_elementos(elementos);
+    $("#buscador").on("change", function(){
+      substring  = '';
+      sublist = [];
+      for (index in elementos){
+        if (elementos[index].indexOf(substring) !== -1){
+          hola = 1;
+        }
+      }
+    })
 });
 </script>
 
