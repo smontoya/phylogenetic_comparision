@@ -63,7 +63,7 @@ def validador():
     try:
         x = subprocess.check_output(cmd, universal_newlines=True)
     except Exception as e:
-        return 'Error al ejecutar R'
+        return '{"error":"Error al ejecutar R"}'
     x = int(x)
 
     # 1 Tienen mismas especies
