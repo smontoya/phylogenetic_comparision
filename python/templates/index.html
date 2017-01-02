@@ -56,7 +56,6 @@
       Cargar secuencia <small>Uno de los archivos no posee secuencia</small>
   </div>
   <div class="box-body">
-
     
   </div>
 </div>
@@ -211,10 +210,13 @@ $(function() {
         });
       }else{
         if (data['id'] == 4){
-          $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ msg)
+          $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"])
         }
         else if (data['id'] == 5){
-          $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ msg)
+          $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"])
+        }
+        else{
+         $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"]) 
         }
       }
     });
