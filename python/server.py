@@ -1,40 +1,59 @@
-from flask import request, render_template, Flask
+from flask import request, render_template, Flask, url_for
 from werkzeug.utils import secure_filename
+from os.path import join as joinPath
+from Bio import Phylo
+import os
 import subprocess
 import json
+import uuid
+from shutil import move
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
+def index():
     return render_template('index.html')
 
 
-
-
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
+@app.route('/upload/<filename>', methods=['GET', 'POST'])
+def upload_file(filename):
     if request.method == 'POST':
-        f = request.files['the_file']
-        f.save('/var/www/uploads/' + secure_filename(f.filename))
+        f = request.files['uploadfile']
+        filepath = 'uploads/' + secure_filename(filename)
+        f.save(filepath)
+        tree = Phylo.read(filepath, 'newick')
 
+        return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
 @app.route('/distancias', methods=['GET', 'POST'])
 def analizar():
+    str_uuid = str(uuid.uuid1())
     command = 'Rscript'
     path2script = 'distancias.R'
     cmd = [command, path2script]
     try:
-        x, error = subprocess.check_output(cmd, universal_newlines=True)
+        x = subprocess.check_output(cmd, universal_newlines=True)
     except Exception as e:
-        return 'Error al ejecutar R'
+        return "{'error': 'Se ha producido un error al ejecutar R'}"
 
-    valores = x.split(' ')
-    for index in range(len(valores)):
-        valores[index] = eval(valores[index])
+    x = x.strip().split(';')
+    for index in range(len(x)):
+        x[index] = x[index].strip().split(' ')
+        if len(x[index]) > 1:
+            x[index] = {'name': x[index][0], 'value': x[index][1]}
+    directory = joinPath('results', str_uuid)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    return json.dumps(valores)
+    with open(joinPath(directory, 'statistics.json'), 'w') as outfile:
+        json.dump(x, outfile)
+
+    move("uploads/tree1.tree", joinPath(directory, 'tree1.tree'))
+    move("uploads/tree2.tree", joinPath(directory, 'tree2.tree'))
+
+    return json.dumps({'ok': url_for('.view', str_uuid=str_uuid)})
+
 
 @app.route('/validador', methods=['GET', 'POST'])
 def validador():
@@ -46,42 +65,30 @@ def validador():
     except Exception as e:
         return 'Error al ejecutar R'
     x = int(x)
-    
+
     # 1 Tienen mismas especies
     # 2 distinta cantidad de especies
     # 3 misma cantidad pero no mismas especies
 
     if x == 1:
-        return "OK"
+        return '{"ok": "ok"}'
     elif x == 2:
-        return "distinta cantidad de especies"
+        return '{"error": "Las secuencias tienen distinta cantidad de especies", "id": 2}'
+    elif x == 4:
+        return '{"error": "El arbol 1 árbol esta sin distancias", "id": 4}'
+    elif x == 5:
+        return '{"error": "El árbol 2 no posee distancias", "id": 5}'
     else:
-        return "misma cantidad pero no mismas especies"
+        return '{"error": "Las especias no coinciden", "id": 2}'
 
 
-
-    return json.dumps(valores)
-
-
-
-
-# # run_max.py
-# import subprocess
-
-# # Define command and arguments
-# command = 'Rscript'
-# path2script = 'path/to your script/max.R'
-
-# # Variable number of args in a list
-# args = ['11', '3', '9', '42']
-
-# # Build subprocess command
-# cmd = [command, path2script] + args
-
-# # check_output will run the command and store to result
-# x = subprocess.check_output(cmd, universal_newlines=True)
-
-# print('The maximum of the numbers is:', x)
+@app.route('/revisar/<str_uuid>', methods=['GET', 'POST'])
+def view(str_uuid):
+    directory = joinPath('results', str_uuid)
+    data = None
+    with open(joinPath(directory, 'statistics.json')) as data_file:
+        data = json.load(data_file)
+    return render_template("revisar.html", statistics=data)
 
 
 
