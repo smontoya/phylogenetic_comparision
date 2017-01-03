@@ -247,8 +247,9 @@
         str = $(this).text()
         if (str.toLowerCase().indexOf(")") >= 0){
           var especie_listado = str.split('(')
-          if(especie_listado[0] == primera_especie){
+          if($.inArray(especie_listado[0], listado_especies) > -1){
             return false;
+            //var found = $.inArray('specialword', categories) > -1;
           }
           listado_especies.push(especie_listado[0])
           var separo_especies = especies_listado.split(';')
