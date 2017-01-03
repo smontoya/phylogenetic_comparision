@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block extra_css%}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
  <style type="text/css" media="screen">
       body { font-family: "Helvetica Neue", Helvetica, sans-serif; }
       td { vertical-align: top; }
@@ -65,8 +68,17 @@
 {%block body%}
 <div class="box">
   <div class="box-body">
-  <input type="text" name="" id="especie_buscar">
-  <button class="buscador">Buscar</button>
+  <!--input type="text" name="" id="especie_buscar">
+  <button class="buscador">Buscar</button-->
+
+  <div class="ui-widget">
+    <label for="tags">Especie: </label>
+    <input id="tags" id="especie_buscar">
+    <button class="buscador">Buscar</button>
+  </div>
+  
+
+
     <table>
       <tr>
         <td>
@@ -117,6 +129,7 @@
 {% endblock%}
 
 {% block extra_js%}
+  
   <script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
   <script src="/static/js/d3.phylogram.js" type="text/javascript"></script>
   <script type="text/javascript">
@@ -148,8 +161,7 @@
   $(function(){
 
     $('.buscador').click(function(){
-      var especie = $('#especie_buscar').val();
-      console.log(especie)
+      var especie = $('#tags').val();
       $( "text:contains('"+especie+"')" ).prev().css({
                                                      'fill' : '#0d47a1',
                                                      'stroke' : '#0d47a1'
@@ -161,6 +173,17 @@
                                                           "stroke" : "#5bc0de"
                                                         });
       $("text:not(:contains('"+ especie +"'))").css({'font-weight': 200,'fill' : '#5bc0de'});
+      var contiene_especie = $( "text:contains('"+especie+"')" ).text();
+      var arbol1= contiene_especie.split(")")
+      var especie_1 = arbol1[0].split('(')
+      var especie = especie_1[0]
+      var distancia_1 = especie_1[1]
+      var especie_2 = arbol1[1].split('(')
+      var distancia_2 = especie_2[1]
+
+      $("#distancias #arbol1 #score").text(distancia_1);
+      $("#distancias #arbol2 #score").text(distancia_2);
+      $("#distancias #especie #name").text(especie);
     })
     $('#dialog').hide()
 
@@ -192,6 +215,9 @@
         lefts = lefts + $( this ).prev().offset().left + ',';
       });
 
+
+
+
       var tops_split = tops.split(',')
       var top1 = tops_split[0]
       var top2 = tops_split[1]
@@ -211,19 +237,28 @@
       $("#distancias #arbol2 #score").text(distancia_2);
       $("#distancias #especie #name").text(especie);
 
-
-      //central(especie , distancia_1, distancia_2);
-      $('#dialog').html('<div><h3>Especie : '+especie+'</h3><h4>distancia en árbol 1 : '+distancia_1+'</h4><h4>distancia en árbol 2 : '+distancia_2+'</h4></div>')
-        $( "#dialog" ).dialog();
-        $('.ui-button').text('x')
-        $("dialog").show();
-        $('.ui-button').click(function(){
-          $( "text:contains('"+especie+"')" ).prev().css({ 'fill' : '#5bc0de','stroke' : '#5bc0de'});
-          $( "text:contains('"+especie+"')" ).css({'font-weight': 200, 'fill' : '#5bc0de'});
-          $(this).attr('')
-        })
     })
 
+      var especies_listado = ''
+      var primera_especie = ''
+      var listado_especies = [];
+
+      $("text").each(function(){
+        str = $(this).text()
+        if (str.toLowerCase().indexOf(")") >= 0){
+          var especie_listado = str.split('(')
+          if(especie_listado[0] == primera_especie){
+            return false;
+          }
+          listado_especies.push(especie_listado[0])
+          var separo_especies = especies_listado.split(';')
+          primera_especie = separo_especies[0]
+        }
+      })
+    
+    $( "#tags" ).autocomplete({
+      source: listado_especies
+    });
     
   })
 
