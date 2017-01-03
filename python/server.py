@@ -25,6 +25,21 @@ def upload_file(filename):
 
         return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
+@app.route('/calcular_distancias/<arbol>', methods=['GET', 'POST'])
+def calcular_distancias(arbol):
+    command = 'Rscript'
+    path2script = 'estima_longitud_arbol%s.R' % str(arbol)
+    cmd = [command, path2script]
+    try:
+        x = subprocess.check_output(cmd, universal_newlines=True)
+        x = eval(x)
+    except Exception as e:
+        return "{'error': 'Se ha producido un error al ejecutar R'}"
+    if x == 0:
+        return "{'ok': 'ok'}"
+    else:
+        return "{'error': 'La secuencia no corresponde al arbol'}"
+
 
 @app.route('/distancias', methods=['GET', 'POST'])
 def analizar():
@@ -78,6 +93,8 @@ def validador():
         return '{"error": "El arbol 1 árbol esta sin distancias", "id": 4}'
     elif x == 5:
         return '{"error": "El árbol 2 no posee distancias", "id": 5}'
+    elif x == 6:
+        return '{"error": "Los árboles no poseen distancias", "id": 6}'
     else:
         return '{"error": "Las especias no coinciden", "id": 2}'
 
@@ -88,7 +105,16 @@ def view(str_uuid):
     data = None
     with open(joinPath(directory, 'statistics.json')) as data_file:
         data = json.load(data_file)
-    return render_template("revisar.html", statistics=data)
+    data = data[0:4]
+    newick1 = ''
+    with open(joinPath(directory, 'tree1.tree')) as data_file:
+        newick1 = data_file.read()
+    newick2 = ''
+    with open(joinPath(directory, 'tree2.tree')) as data_file:
+        newick2 = data_file.read()
+
+    return render_template("revisar.html", statistics=data, newick1=newick1,
+                           newick2=newick2)
 
 
 

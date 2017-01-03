@@ -160,8 +160,8 @@ if (!d3) { throw "d3 wasn't included!"};
     vis.selectAll('g.leaf.node')
       .append("svg:circle")
         .attr("r", 4)
-        .attr('stroke',  'yellowGreen')
-        .attr('fill', 'greenYellow')
+        .attr('stroke',  '#5bc0de')
+        .attr('fill', '#5bc0de')
         .attr('stroke-width', '2px');
     
     vis.selectAll('g.root.node')
@@ -278,25 +278,45 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
       
     d3.phylogram.styleTreeNodes(vis)
-    
-    if (!options.skipLabels) {
-      vis.selectAll('g.inner.node')
-        .append("svg:text")
-          .attr("dx", -6)
-          .attr("dy", -6)
-          .attr("text-anchor", 'end')
-          .attr('font-size', '8px')
-          .attr('fill', '#ccc')
-          .text(function(d) { return d.length; });
 
-      vis.selectAll('g.leaf.node').append("svg:text")
-        .attr("dx", 8)
-        .attr("dy", 3)
-        .attr("text-anchor", "start")
-        .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
-        .attr('font-size', '10px')
-        .attr('fill', 'black')
-        .text(function(d) { return d.name + ' ('+d.length+')'; });
+    if (!options.skipLabels) {
+
+        if (!mirror){
+          vis.selectAll('g.inner.node')
+            .append("svg:text")
+              .attr("dx", -8)
+              .attr("dy", -8)
+              .attr("text-anchor", 'end')
+              .attr('font-size', '10px')
+              .attr('fill', 'green')
+              .text(function(d) { return d.length; });
+          vis.selectAll('g.leaf.node').append("svg:text")
+                  .attr("dx", 8)
+                  .attr("dy", 3)
+                  .attr("text-anchor", "start")
+                  .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
+                  .attr('font-size', '12px')
+                  .attr('fill', '#5bc0de')
+            .text(function(d) { return d.name + ' ('+d.length+')'; });
+        }
+        else{
+          vis.selectAll('g.inner.node')
+            .append("svg:text")
+              .attr("dx", -8)
+              .attr("dy", -8)
+              .attr("text-anchor", 'end')
+              .attr('font-size', '10px')
+              .attr('fill', 'green')
+              .text(function(d) { return d.length; });
+          vis.selectAll('g.leaf.node').append("svg:text")
+            .attr("dx", -8)
+            .attr("dy", 3)
+            .attr("text-anchor", "end")
+            .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
+            .attr('font-size', '12px')
+            .attr('fill', '#5bc0de')
+            .text(function(d) { return d.name + ' ('+d.length+')'; });
+        }
     }
     return {tree: tree, vis: vis}
   }

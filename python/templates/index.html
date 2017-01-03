@@ -17,9 +17,9 @@
 
     <div class="form-group row">
       <div class="col-sm-11">
-        <label>Secuencia 1</label>
-        <textarea class="form-control" rows="3" id="newickTextArea1" placeholder="Escriba aqui su secuencia en formato newick"></textarea>
-        <label>Ó</label>
+        <label>Arbol 1</label>
+        <!-- <textarea class="form-control" rows="3" id="newickTextArea1" placeholder="Escriba aqui su secuencia en formato newick"></textarea> -->
+        <!-- <label>Ó</label> -->
         <button id="uploadBtn1" class="btn btn-large btn-primary">Seleccione su archivo</button>
         <div id="progressOuter1" class="progress progress-striped active" style="display:none;">
           <div id="progressBar1" class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
@@ -28,9 +28,9 @@
     </div>
     <div class="form-group row">
       <div class="col-sm-11">
-        <label>Secuencia 2</label>
-        <textarea class="form-control" rows="3" id="newickTextArea2" placeholder="Escriba aqui su secuencia en formato newick"></textarea>
-        <label>Ó</label>
+        <label>Arbol 2</label>
+        <!-- <textarea class="form-control" rows="3" id="newickTextArea2" placeholder="Escriba aqui su secuencia en formato newick"></textarea> -->
+        <!-- <label>Ó</label> -->
         <button id="uploadBtn2" class="btn btn-large btn-primary">Seleccione su archivo</button>
         <div id="progressOuter2" class="progress progress-striped active" style="display:none;">
           <div id="progressBar2" class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
@@ -53,9 +53,36 @@
 </div>
 <div class="box cargar_secuencias">
   <div class="box-header with-border">
-      Cargar secuencia <small>Uno de los archivos no posee secuencia</small>
+      <h2>Cargar secuencias</h2> <small>Uno de los archivos no posee secuencia</small>
   </div>
+
   <div class="box-body">
+    <div class="form-group row form_seq1">
+      <div class="col-sm-11">
+        <label>Secuencia para el arbol 1</label>
+        <!-- <textarea class="form-control" rows="3" id="newickTextArea3" placeholder="Ingresa aqui la secuencia para el arbol 1"></textarea> -->
+        <!-- <label>Ó</label> -->
+        <button id="uploadBtn3" class="btn btn-large btn-primary">Seleccione su archivo</button>
+        <div id="progressOuter3" class="progress progress-striped active" style="display:none;">
+          <div id="progressBar3" class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row form_seq2">
+      <div class="col-sm-11">
+        <label>Secuencia para el arbol 2</label>
+        <!-- <textarea class="form-control" rows="3" id="newickTextArea3" placeholder="Ingresa aqui la secuencia para el arbol 2"></textarea> -->
+        <!-- <label>Ó</label> -->
+        <button id="uploadBtn4" class="btn btn-large btn-primary">Seleccione su archivo</button>
+        <div id="progressOuter4" class="progress progress-striped active" style="display:none;">
+          <div id="progressBar4" class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+    <button id="procesar_seq" class="btn btn-primary btn-large">Procesar</button>
+
+
     
   </div>
 </div>
@@ -68,14 +95,26 @@
 
 $(function() {
   $("#procesar").hide();
+  $("#procesar_seq").hide();
   $(".proccess_form").hide();
   $(".cargar_secuencias").hide();
+  $(".form_seq1").hide();
+  $(".form_seq2").hide();
 
-  var file1 = false
-  var file2 = false
+
+  var file1 = false;
+  var file2 = false;
+  var seq1 = true;
+  var seq2 = true;
+
   var comprobar_archivos = function(){
     if (file1 && file2){
       $("#procesar").show();
+    }
+  }
+  var comprobar_archivos_seq = function(){
+    if (seq1 && seq2){
+      $("#procesar_seq").show();
     }
   }
 
@@ -86,6 +125,15 @@ $(function() {
   var btn2 = document.getElementById('uploadBtn2'),
       progressBar2 = document.getElementById('progressBar2'),
       progressOuter2 = document.getElementById('progressOuter2');
+
+  var btn3 = document.getElementById('uploadBtn3'),
+      progressBar3 = document.getElementById('progressBar3'),
+      progressOuter3 = document.getElementById('progressOuter3');
+
+  var btn4 = document.getElementById('uploadBtn4'),
+      progressBar4 = document.getElementById('progressBar4'),
+      progressOuter4 = document.getElementById('progressOuter4');
+
 
   var msgBox = document.getElementById('msgBox');
 
@@ -184,6 +232,110 @@ $(function() {
             file2 = false
           }
   });
+
+
+  var uploader3 = new ss.SimpleUpload({
+        button: btn3,
+        url: "{{url_for('upload_file', filename='sequence1.seq')}}",
+        name: 'uploadfile',
+        data: {filename: 'sequence1.seq'},
+        multipart: true,
+        hoverClass: 'hover',
+        focusClass: 'focus',
+        responseType: 'json',
+        startXHR: function() {
+            progressOuter3.style.display = 'block'; // make progress bar visible
+            this.setProgressBar( progressBar3 );
+        },
+        onSubmit: function() {
+            msgBox.innerHTML = ''; // empty the message box
+            btn3.innerHTML = 'Subiendo...'; // change button text to "Uploading..."
+          },
+        onComplete: function( filename, response ) {
+            btn3.innerHTML = "archivo: " + filename;
+            progressOuter3.style.display = 'none'; // hide progress bar when upload is completed
+            if ( !response ) {
+                btn3.innerHTML = "Selecciona un archivo valido";
+                msgBox.innerHTML = 'No se pudo subir el archivo';
+                seq1 = false
+                return;
+            }
+            if ( response.success == true ) {
+                $("#newickTextArea3").hide()
+                seq1 = true
+                comprobar_archivos_seq();
+                msgBox.innerHTML = '<stsrong>' + filename  + '</strong>' + ' ha subido correctamente.';
+            } else {
+                if ( response.msg )  {
+                    msgBox.innerHTML = escapeTags( response.msg );
+                } else {
+                    msgBox.innerHTML = 'Ha ocurrido un error al intentaru subir su archivo';
+                }
+            }
+          },
+        onError: function() {
+            progressOuter3.style.display = 'none';
+            btn3.innerHTML = "Selecciona un archivo valido";
+            msgBox.innerHTML = 'No se pudo subir el archivo 2';
+            file2 = false
+          }
+  });
+
+
+  var uploader4 = new ss.SimpleUpload({
+        button: btn4,
+        url: "{{url_for('upload_file', filename='sequence1.seq')}}",
+        name: 'uploadfile',
+        data: {filename: 'sequence1.seq'},
+        multipart: true,
+        hoverClass: 'hover',
+        focusClass: 'focus',
+        responseType: 'json',
+        startXHR: function() {
+            progressOuter4.style.display = 'block'; // make progress bar visible
+            this.setProgressBar( progressBar4 );
+        },
+        onSubmit: function() {
+            msgBox.innerHTML = ''; // empty the message box
+            btn4.innerHTML = 'Subiendo...'; // change button text to "Uploading..."
+          },
+        onComplete: function( filename, response ) {
+            btn4.innerHTML = "archivo: " + filename;
+            progressOuter4.style.display = 'none'; // hide progress bar when upload is completed
+            if ( !response ) {
+                btn4.innerHTML = "Selecciona un archivo valido";
+                msgBox.innerHTML = 'No se pudo subir el archivo';
+                seq2 = false
+                return;
+            }
+            if ( response.success == true ) {
+                $("#newickTextArea4").hide()
+                seq2 = true
+                comprobar_archivos_seq();
+                msgBox.innerHTML = '<stsrong>' + filename  + '</strong>' + ' ha subido correctamente.';
+            } else {
+                if ( response.msg )  {
+                    msgBox.innerHTML = escapeTags( response.msg );
+                } else {
+                    msgBox.innerHTML = 'Ha ocurrido un error al intentaru subir su archivo';
+                }
+            }
+          },
+        onError: function() {
+            progressOuter4.style.display = 'none';
+            btn4.innerHTML = "Selecciona un archivo valido";
+            msgBox.innerHTML = 'No se pudo subir el archivo 2';
+            file2 = false
+          }
+  });
+
+
+
+
+
+
+
+
   $("#procesar").on("click", function(){
     $(".upload_form").hide();
     $(".proccess_form").show();
@@ -192,9 +344,12 @@ $(function() {
       url: "{{url_for('validador')}}",
     })
     .done(function( msg ) {
+      $(".proccess_form").hide();
+
       var data = JSON.parse(msg)
 
       if ('ok' in data){
+        $(".proccess_form").show();
         $('.proccess_form').html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> Analizando ...')
         $.ajax({
           method: "POST",
@@ -210,13 +365,26 @@ $(function() {
         });
       }else{
         if (data['id'] == 4){
-          $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"])
+          $('.cargar_secuencias').show()
+          $('.form_seq1').show()
+          $('.form_seq2').hide()
+          seq1 = false;
         }
         else if (data['id'] == 5){
-          $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"])
+          $('.cargar_secuencias').show()
+          $('.form_seq1').hide()
+          $('.form_seq2').show()
+          seq2 = false;
+        }
+        else if (data['id'] == 6){
+          $('.cargar_secuencias').show()
+          $('.form_seq1').show()
+          $('.form_seq2').show()
+          seq1 = false;
+          seq2 = false;
         }
         else{
-         $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"]) 
+         $('.cargar_secuencias').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"]) 
         }
       }
     });
