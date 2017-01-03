@@ -289,7 +289,7 @@ if (!d3) { throw "d3 wasn't included!"};
               .attr("text-anchor", 'end')
               .attr('font-size', '10px')
               .attr('fill', 'green')
-              .text(function(d) { return d.length; });
+              .text(function(d) { return Math.round(d.length*1000) /1000; });
           vis.selectAll('g.leaf.node').append("svg:text")
                   .attr("dx", 8)
                   .attr("dy", 3)
@@ -297,7 +297,7 @@ if (!d3) { throw "d3 wasn't included!"};
                   .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
                   .attr('font-size', '12px')
                   .attr('fill', '#5bc0de')
-            .text(function(d) { return d.name + ' ('+d.length+')'; });
+            .text(function(d) { return d.name + ' ('+(Math.round(d.length*1000) /1000)+')'; });
         }
         else{
           vis.selectAll('g.inner.node')
@@ -307,7 +307,7 @@ if (!d3) { throw "d3 wasn't included!"};
               .attr("text-anchor", 'end')
               .attr('font-size', '10px')
               .attr('fill', 'green')
-              .text(function(d) { return d.length; });
+              .text(function(d) { return Math.round(d.length*1000) /1000; });
           vis.selectAll('g.leaf.node').append("svg:text")
             .attr("dx", -8)
             .attr("dy", 3)
@@ -315,7 +315,8 @@ if (!d3) { throw "d3 wasn't included!"};
             .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
             .attr('font-size', '12px')
             .attr('fill', '#5bc0de')
-            .text(function(d) { return d.name + ' ('+d.length+')'; });
+            .text(function(d) { return d.name + ' ('+(Math.round(d.length*1000) /1000)+')'; });
+            
         }
     }
     return {tree: tree, vis: vis}
