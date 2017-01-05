@@ -129,8 +129,11 @@ def view(str_uuid):
         newick2 = data_file.read()
 
     subarboles = []
-    with open(joinPath(directory, 'subarboles.json')) as data_file:
-        subarboles = json.load(data_file)
+    try:
+        with open(joinPath(directory, 'subarboles.json')) as data_file:
+            subarboles = json.load(data_file)
+    except Exception as e:
+        print(e)
 
     return render_template("revisar.html", statistics=data, newick1=newick1,
                            newick2=newick2, subarboles=subarboles,
