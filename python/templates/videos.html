@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block header_title%}
+<h1>
+  Comparar secuencias
+</h1>
+{%endblock%}
+{%block body%}
+<div class="box upload_form">
+  <div class="box-header with-border">
+      <h3>Videos</h3>
+  </div>
+  <div class="box-body">
+  Los videos estan siendo subidos
+  </div>
+</div>
+<div class="box upload_form">
+  <div class="box-header with-border">
+      <h3>Código</h3>
+  </div>
+  <div class="box-body">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+    El código se encuentra en github en el siguiente link
+    <!-- Place this tag where you want the button to render. -->
+    <br>
+<a class="github-button btn-lg btn" href="https://github.com/smontoya/phylogenetic_comparison/subscription" data-style="mega" aria-label="Watch smontoya/phylogenetic_comparison on GitHub">Ver en github</a>
+
+  </div>
+</div>
+{% endblock %}
