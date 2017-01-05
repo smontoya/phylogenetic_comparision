@@ -10,11 +10,6 @@
       Subir archivos <small>Seleccione los archivos a comparar</small>
   </div>
   <div class="box-body">
-    <div class="form-group">
-      <label for="exampleInputEmail1">Titulo</label>
-      <input type="text" class="form-control" id="titulo" placeholder="Ingrese un nombre para identificar el analisis">
-    </div>
-
     <div class="form-group row">
       <div class="col-sm-11">
         <label>Arbol 1</label>
@@ -177,7 +172,7 @@ $(function() {
                 if ( response.msg )  {
                     msgBox.innerHTML = escapeTags( response.msg );
                 } else {
-                    msgBox.innerHTML = 'Ha ocurrido un error al intentaru subir su archivo';
+                    msgBox.innerHTML = 'Ha ocurrido un error al intentar subir su archivo';
                 }
             }
           },
@@ -333,16 +328,15 @@ $(function() {
           }
   });
 
-
-
-
   $('#procesar_seq').on('click', function(){
     $(".cargar_secuencias").hide()
     $(".proccess_seq").show();
   })
-
-
-
+  $(document).on('click', ".volver_a_cargar", function(){
+    $(".proccess_form").hide();
+    $(".upload_form").show();
+    
+  });
   $("#procesar").on("click", function(){
     $(".upload_form").hide();
     $(".proccess_form").show();
@@ -357,7 +351,7 @@ $(function() {
 
       if ('ok' in data){
         $(".proccess_form").show();
-        $('.proccess_form').html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> Analizando ...')
+        $('.proccess_form').html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> Analizando ...');
         $.ajax({
           method: "POST",
           url: "{{url_for('.analizar')}}",
@@ -367,7 +361,10 @@ $(function() {
           if ('ok' in data){
             window.location.replace(data['ok']);
           }else{
-            $('.proccess_form').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"])
+            error_html = '<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  ' + data["error"];
+            error_html += '</br></br><button class="btn btn-primary" class="volver_a_cargar"> Volver a subir archivos</button>';
+            $('.proccess_form').html(error_html);
+
           }
         });
       }else{
@@ -391,7 +388,10 @@ $(function() {
           seq2 = false;
         }
         else{
-         $('.cargar_secuencias').html('<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"]) 
+          error_html = '<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"];
+          error_html += '</br></br><button class="btn btn-primary" class="volver_a_cargar"> Volver a subir archivos</button>';
+          $(".proccess_form").show();
+          $('.proccess_form').html(error_html);
         }
       }
     });
