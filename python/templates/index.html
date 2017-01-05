@@ -362,7 +362,7 @@ $(function() {
             window.location.replace(data['ok']);
           }else{
             error_html = '<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  ' + data["error"];
-            error_html += '</br></br><button class="btn btn-primary" class="volver_a_cargar"> Volver a subir archivos</button>';
+            error_html += '</br></br><button class="btn btn-primary volver_a_cargar" > Volver a subir archivos</button>';
             $('.proccess_form').html(error_html);
 
           }
@@ -389,7 +389,7 @@ $(function() {
         }
         else{
           error_html = '<i class="fa fa-exclamation-circle fa-3x fa-fw"></i>  '+ data["error"];
-          error_html += '</br></br><button class="btn btn-primary" class="volver_a_cargar"> Volver a subir archivos</button>';
+          error_html += '</br></br><button class="btn btn-primary volver_a_cargar"> Volver a subir archivos</button>';
           $(".proccess_form").show();
           $('.proccess_form').html(error_html);
         }
