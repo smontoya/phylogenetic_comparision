@@ -16,6 +16,13 @@ def index():
     return render_template('index.html', dirnames=dirnames)
 
 
+@app.route('/videos')
+def videos():
+    dirnames = get_dirs()
+    return render_template('videos.html', dirnames=dirnames)
+
+
+
 @app.route('/upload/<filename>', methods=['GET', 'POST'])
 def upload_file(filename):
     if request.method == 'POST':
