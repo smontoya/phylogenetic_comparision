@@ -148,4 +148,4 @@ def view(str_uuid):
 
 
 
-app.run(debug=True, host='0.0.0.0')
+app.run(debug=True, host='0.0.0.0', threaded=True)
