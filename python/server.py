@@ -45,12 +45,20 @@ def calcular_distancias(arbol):
 def analizar():
     str_uuid = str(uuid.uuid1())
     command = 'Rscript'
-    path2script = 'distancias.R'
-    cmd = [command, path2script]
+    path2script_dist = 'distancias.R'
+    path2script_arboles = 'subarboles.R'
     try:
-        x = subprocess.check_output(cmd, universal_newlines=True)
+        x = subprocess.check_output([command, path2script_dist],
+                                    universal_newlines=True)
     except Exception as e:
         return "{'error': 'Se ha producido un error al ejecutar R'}"
+
+    try:
+        subarboles = subprocess.check_output([command, path2script_arboles],
+                                             universal_newlines=True)
+    except Exception as e:
+        print(e)
+        return "{'error': 'Se ha producido un error al calcular los subarboles'}"
 
     x = x.strip().split(';')
     for index in range(len(x)):
@@ -63,6 +71,9 @@ def analizar():
 
     with open(joinPath(directory, 'statistics.json'), 'w') as outfile:
         json.dump(x, outfile)
+
+    with open(joinPath(directory, 'subarboles.json'), 'w') as outfile:
+        outfile.write(subarboles)
 
     move("uploads/tree1.tree", joinPath(directory, 'tree1.tree'))
     move("uploads/tree2.tree", joinPath(directory, 'tree2.tree'))
@@ -113,8 +124,12 @@ def view(str_uuid):
     with open(joinPath(directory, 'tree2.tree')) as data_file:
         newick2 = data_file.read()
 
+    subarboles = []
+    with open(joinPath(directory, 'subarboles.json')) as data_file:
+        subarboles = json.load(data_file)
+
     return render_template("revisar.html", statistics=data, newick1=newick1,
-                           newick2=newick2)
+                           newick2=newick2, subarboles=subarboles)
 
 
 

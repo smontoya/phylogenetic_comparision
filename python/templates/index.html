@@ -51,6 +51,11 @@
     <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> procesando
   </div>
 </div>
+<div class="box proccess_seq">
+  <div class="box-body">
+    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> Generando distancias con las secuencias
+  </div>
+</div>
 <div class="box cargar_secuencias">
   <div class="box-header with-border">
       <h2>Cargar secuencias</h2> <small>Uno de los arboles no posee distancia</small>
@@ -80,10 +85,8 @@
         </div>
       </div>
     </div>
-    <button id="procesar_seq" class="btn btn-primary btn-large">Procesar</button>
-
-
-    
+    <button id="procesar_seq" class="btn btn-primary btn-large">Procesar secuencias</button>
+  
   </div>
 </div>
 {%endblock%}
@@ -98,6 +101,7 @@ $(function() {
   $("#procesar_seq").hide();
   $(".proccess_form").hide();
   $(".cargar_secuencias").hide();
+  $(".proccess_seq").hide();
   $(".form_seq1").hide();
   $(".form_seq2").hide();
 
@@ -284,9 +288,9 @@ $(function() {
 
   var uploader4 = new ss.SimpleUpload({
         button: btn4,
-        url: "{{url_for('upload_file', filename='sequence1.seq')}}",
+        url: "{{url_for('upload_file', filename='sequence2.seq')}}",
         name: 'uploadfile',
-        data: {filename: 'sequence1.seq'},
+        data: {filename: 'sequence2.seq'},
         multipart: true,
         hoverClass: 'hover',
         focusClass: 'focus',
@@ -332,7 +336,10 @@ $(function() {
 
 
 
-
+  $('#procesar_seq').on('click', function(){
+    $(".cargar_secuencias").hide()
+    $(".proccess_seq").show();
+  })
 
 
 

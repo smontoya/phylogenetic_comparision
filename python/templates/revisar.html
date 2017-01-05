@@ -77,8 +77,6 @@
     <button class="buscador">Buscar</button>
   </div>
   
-
-
     <table>
       <tr>
         <td>
@@ -126,6 +124,41 @@
 
   </div>
 </div>
+
+<div class="box">
+  <div class="box-header with-border">
+    <h3>Subárboles</h3> <small>se han encontrado {{subarboles | length}} subárboles en común</small>
+
+  </div>
+  <div class="box-body">
+  {% for arbol in subarboles%}
+  <div class="col-lg-2 col-xs-6">
+    <div class="small-box bg-yellow collapsed-box">
+      <div class="inner">
+        <h3><a href="#" class="resaltar_subarbol" data-especies='{{arbol.especies |tojson|safe}}'>Subárbol {{arbol.id}}</a></h3>
+        <p><b>Nodos</b>: {{arbol.nodos}}</p> 
+        <p><b>Hojas</b>: {{arbol.hojas}}</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-person-add"></i>
+      </div>
+      <a href="#" class="small-box-footer">
+        Especies encontradas <i class="fa fa-plus"></i>
+      </a>
+      <div class="box-body">
+        <ul>
+          {% for especie in arbol.especies%}
+          <li><a href="#" class="resaltar_especie" data-especie="{{especie | trim}}">{{especie}}</a></li>
+          {%endfor%}
+
+        </ul>
+      </div>
+    </div>
+  </div>
+  {%endfor%}
+
+  </div>
+</div>
 {% endblock%}
 
 {% block extra_js%}
@@ -159,9 +192,8 @@
   }, true);
 
   $(function(){
-
-    $('.buscador').click(function(){
-      var especie = $('#tags').val();
+    function resaltar_especie(especie){
+      debugger
       $( "text:contains('"+especie+"')" ).prev().css({
                                                      'fill' : '#0d47a1',
                                                      'stroke' : '#0d47a1'
@@ -184,6 +216,33 @@
       $("#distancias #arbol1 #score").text(distancia_1);
       $("#distancias #arbol2 #score").text(distancia_2);
       $("#distancias #especie #name").text(especie);
+    }
+    $(".resaltar_especie").on("click", function(){
+      resaltar_especie($(this).data('especie'));  
+    });
+    $(".resaltar_subarbol").on("click", function(){
+      data = $(this).data("especies");
+      /*$("svg g g.leaf.node text").prev().css({"fill"  : "#5bc0de","stroke" : "#5bc0de"});
+      $("text:not(:contains('"+ especie +"'))").css({'font-weight': 200,'fill' : '#5bc0de'});*/
+
+      $("svg g g.leaf.node text").prev().css({"fill": "#5bc0de", "stroke": "#5bc0de"});
+      $("text").css({'font-weight': 200,'fill' : '#5bc0de'});
+
+      for (d in data){
+              especie = data[d].trim();
+            $( "text:contains('"+especie+"')" ).prev().css({
+                                                           'fill' : '#0d47a1',
+                                                           'stroke' : '#0d47a1'
+                                                        });
+            $( "text:contains('"+especie+"')" ).css({'font-weight': 800, 'fill' : '#0d47a1'});
+      
+      }
+
+    });
+    $('.buscador').click(function(){
+      var especie = $('#tags').val();
+      resaltar_especie(especie);
+      
     })
     $('#dialog').hide()
 
@@ -230,7 +289,7 @@
       var especie_1 = arbol1[0].split('(')
       var especie = especie_1[0]
       var distancia_1 = especie_1[1]
-      var especie_2 = arbol1[1].split('(')
+      var especie_2 = arbol1[1].split('(');
       var distancia_2 = especie_2[1]
 
       $("#distancias #arbol1 #score").text(distancia_1);
