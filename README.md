@@ -10,4 +10,3 @@ Para correr el proyecto en python debes instalar las dependencias y tener R inst
 * biopython==1.68
 * click==6.6
 * itsdangerous==0.24
-* npm==0.1.1
