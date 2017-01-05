@@ -12,7 +12,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    dirnames = get_dirs()
+    return render_template('index.html', dirnames=dirnames)
 
 
 @app.route('/upload/<filename>', methods=['GET', 'POST'])
@@ -81,6 +82,9 @@ def analizar():
     return json.dumps({'ok': url_for('.view', str_uuid=str_uuid)})
 
 
+def get_dirs():
+    return os.listdir('results')
+
 @app.route('/validador', methods=['GET', 'POST'])
 def validador():
     command = 'Rscript'
@@ -129,7 +133,8 @@ def view(str_uuid):
         subarboles = json.load(data_file)
 
     return render_template("revisar.html", statistics=data, newick1=newick1,
-                           newick2=newick2, subarboles=subarboles)
+                           newick2=newick2, subarboles=subarboles,
+                           dirnames=get_dirs())
 
 
 
